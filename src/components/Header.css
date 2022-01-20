@@ -73,14 +73,14 @@ textarea{
 }
 
 .botao-salvar{
-  background-color: rgb(198, 198, 198);
+  background-color: #666;
   color: chartreuse;
   text-shadow: 0 0 3px black;
 }
 
 .botao-cancelar{
-  background-color: rgb(198, 198, 198);
-  color: crimson;
+  background-color: #666;
+  color: #000;
 }
 
 .botao-cancelar:hover{

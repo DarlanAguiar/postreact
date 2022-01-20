@@ -1,7 +1,7 @@
 import "./App.css";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
-import { bancoDeDados, removeItem } from "./database/database";
+import { bancoDeDados } from "./database/database";
 
 import { TiPlus } from "react-icons/ti";
 import { useEffect, useState } from "react";
@@ -27,7 +27,7 @@ function App() {
   const createCard = async (dados) => {
     setTimeout(() => {
       setInformacoes(dados);
-    }, 80);
+    }, 110);
 
     /* const info = [
       ...infoPostit,
@@ -55,6 +55,7 @@ function App() {
         const checkList = cursor.value.checkList;
         const date = cursor.value.date;
         const id = cursor.value.id;
+        const editDate = cursor.value.editDate;
 
         dados.push({
           id: id,
@@ -62,6 +63,7 @@ function App() {
           message: text,
           checkList: checkList,
           date: date,
+          editDate: editDate,
         });
 
         cursor.continue();
@@ -84,11 +86,18 @@ function App() {
 
   const editPost = (data) => {
     let nomeDaLista = "listareact";
-    //let numeroId = Number(id);
 
-    const texto = data.text;
+    const dataED = new Date();
+    const dia = String(dataED.getDate()).padStart(2, "0");
+    const mes = String(dataED.getMonth() + 1).padStart(2, "0");
+    const ano = dataED.getFullYear();
+    const hora = dataED.getHours();
+    let minutos = dataED.getMinutes();
+    minutos.toString().length === 2
+      ? (minutos = minutos)
+      : (minutos = `0${minutos}`);
 
-    console.log(typeof texto)
+    const dataAtual = `Editado ${dia}/${mes}/${ano} às ${hora}:${minutos}`;
 
     let localParaAdicionar = bancoDeDados.transaction(
       [nomeDaLista],
@@ -103,6 +112,7 @@ function App() {
       message: data.message,
       checkList: data.checkList,
       date: data.date,
+      editDate: dataAtual,
     });
 
     fetchData();
@@ -113,14 +123,12 @@ function App() {
       <Header show={menu} setShow={deslizaMenu} fetchData={fetchData} />
 
       {informacoes.map((info, id) => (
-        <div className="postit">
-          <CardPostit
-            info={info}
-            deletePost={deletePost}
-            editPost={editPost}
-            key={id}
-          />
-        </div>
+        <CardPostit
+          info={info}
+          deletePost={deletePost}
+          editPost={editPost}
+          key={id}
+        />
       ))}
 
       <button className="botao-adicionar" onClick={deslizaMenu}>

@@ -1,12 +1,12 @@
-import React, { useState } from "react";
+import React from "react";
 import { BsTrash } from "react-icons/bs";
 
 import "./Texts.css";
 
 const Texts = ({ data, deletePost, editPost, dataEdit }) => {
-  const [title, setTitle] = useState("");
+  
   let dados = dataEdit;
-  console.log(dados)
+  
   return (
     <div className="texts">
       <div className="cabecalho">

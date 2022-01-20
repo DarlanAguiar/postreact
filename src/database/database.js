@@ -1,18 +1,14 @@
-import React from "react";
-
 export let bancoDeDados;
 let nomeDoBancoDeDados = "dbpostreact";
 let nomeDaLista = "listareact";
 
 function criaBancoDeDados() {
-  let requisicao = window.indexedDB.open(nomeDoBancoDeDados, 1);
+  let requisicao = window.indexedDB.open(nomeDoBancoDeDados, 2);
 
   requisicao.onsuccess = (evento) => {
     bancoDeDados = requisicao.result;
 
     //console.log("banco de dados criado", evento, bancoDeDados);
-
-    // mostrarCardNaTela();
   };
 
   requisicao.onupgradeneeded = (evento) => {
@@ -48,23 +44,10 @@ export function salvarDados(data) {
     message: data.message,
     date: data.date,
     checkList: data.checkList,
+    editDate: "",
   };
 
   listaParaAdicionar.add(newItem);
-
-  /* mostrarCardNaTela(); */
 }
-
-export const removeItem = (numberId) => {
-  
-  let localParaAdicionar = bancoDeDados.transaction([nomeDaLista], "readwrite");
-
-  let listaParaAdicionar = localParaAdicionar.objectStore(nomeDaLista);
-  console.log(numberId, typeof numberId);
-
-  //listaParaAdicionar.delete(id);
-
-  //mostrarCardNaTela();
-};
 
 criaBancoDeDados();
