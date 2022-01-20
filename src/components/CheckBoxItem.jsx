@@ -37,7 +37,7 @@ const CheckBoxItem = ({ dataItem, data, indice, editPost }) => {
             editPost(dados);
           }}
         >
-          <GiCheckMark fontSize={14} color="chartreuse" />
+          <GiCheckMark fontSize={14} style= {{color:dataItem.check ? "#777" : "chartreuse"}} />
         </button>
         <button
           className="button_apagar_check"
