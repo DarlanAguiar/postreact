@@ -9,11 +9,13 @@ const Header = ({ show, setShow, fetchData }) => {
   const [title, setTitle] = useState("");
   const [text, setText] = useState("");
   const [date, setDate] = useState("");
+  const [dateValue, setDateValue] = useState("");
   const [noText, setNoText] = useState(false);
   const [checkItem, setCheckItem] = useState("");
   const [listCheckItem, setListCheckItem] = useState([]);
 
   const formatDate = (date) => {
+    setDateValue(date);
     var dateFormat = date.split("-").reverse().join("-");
     setDate(dateFormat);
   };
@@ -29,14 +31,12 @@ const Header = ({ show, setShow, fetchData }) => {
   };
 
   const addListCheckItem = () => {
-    if(checkItem.length > 0){
-
+    if (checkItem.length > 0) {
       const newCheks = [...listCheckItem, { text: checkItem, check: false }];
-  
+
       setListCheckItem(newCheks);
       setCheckItem("");
     }
-    
   };
 
   /* 
@@ -55,6 +55,7 @@ titulo: "Titulo" */
     setTitle("");
     setText("");
     setDate("");
+    setDateValue("");
     setListCheckItem([]);
     setNoText(false);
   };
@@ -71,7 +72,7 @@ titulo: "Titulo" */
 
     clearFilds();
 
-    setShow()
+    setShow();
   };
 
   return (
@@ -120,10 +121,10 @@ titulo: "Titulo" */
           <input
             className="data"
             type="date"
+            value={dateValue}
             onChange={(e) => {
               formatDate(e.target.value);
             }}
-            
           />
         </div>
 
@@ -142,7 +143,6 @@ titulo: "Titulo" */
             className="botao-salvar"
             onClick={() => {
               checkText();
-              
             }}
           >
             Salvar
