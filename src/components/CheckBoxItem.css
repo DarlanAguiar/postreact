@@ -22,6 +22,7 @@
   padding-left: 1px;
   font-size: 0.8em;
   flex: 1;
+  overflow: hidden;
 }
 
 .buttons {

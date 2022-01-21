@@ -75,7 +75,7 @@ titulo: "Titulo" */
   };
 
   return (
-    <header className="menuContainer" style={{ left: show ? 0 : -600 }}>
+    <header className="menuContainer" style={{ left: show ? 0 : "-100vw" }}>
       <div className="menuContainer--areaDigitavel">
         <textarea
           rows={1}
