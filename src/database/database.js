@@ -1,37 +1,50 @@
 export let bancoDeDados;
+let bancoDeDadosInicializado = false;
 let nomeDoBancoDeDados = "dbpostreact";
 let nomeDaLista = "listareact";
 
+export async function getBD() {
+  if (!bancoDeDadosInicializado) {
+    await criaBancoDeDados();
+  }
+  return bancoDeDados;
+}
+
 function criaBancoDeDados() {
-  let requisicao = window.indexedDB.open(nomeDoBancoDeDados, 2);
+  bancoDeDadosInicializado = true;
+  return new Promise((resolve,reject) => {
+    let requisicao = window.indexedDB.open(nomeDoBancoDeDados, 2);
 
-  requisicao.onsuccess = (evento) => {
-    bancoDeDados = requisicao.result;
+    requisicao.onsuccess = (evento) => {
+      bancoDeDados = requisicao.result;
+      console.log("banco de dados criado", evento, bancoDeDados);
+      resolve();
+    };
 
-    //console.log("banco de dados criado", evento, bancoDeDados);
-  };
+    requisicao.onupgradeneeded = (evento) => {
+      bancoDeDados = evento.target.result;
+      if (bancoDeDados.objectStoreNames.contains(nomeDaLista)) {
+        return;
+      }
 
-  requisicao.onupgradeneeded = (evento) => {
-    bancoDeDados = evento.target.result;
-    if (bancoDeDados.objectStoreNames.contains(nomeDaLista)) {
-      return;
-    }
+      const objetoSalvo = bancoDeDados.createObjectStore(nomeDaLista, {
+        keyPath: "id",
+        autoIncrement: true,
+      });
 
-    const objetoSalvo = bancoDeDados.createObjectStore(nomeDaLista, {
-      keyPath: "id",
-      autoIncrement: true,
-    });
+      objetoSalvo.createIndex("lembretereact", "lembretereact", {
+        unique: false,
+      });
 
-    objetoSalvo.createIndex("lembretereact", "lembretereact", {
-      unique: false,
-    });
+      //console.log("houve um upgrade", evento)
+    };
 
-    //console.log("houve um upgrade", evento)
-  };
+    requisicao.onerror = (evento) => {
+      console.log("hove um erro", evento);
+      reject();
+    };
 
-  requisicao.onerror = (evento) => {
-    console.log("hove um erro", evento);
-  };
+  });
 }
 
 export function salvarDados(data) {
@@ -49,5 +62,3 @@ export function salvarDados(data) {
 
   listaParaAdicionar.add(newItem);
 }
-
-criaBancoDeDados();

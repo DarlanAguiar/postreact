@@ -1,11 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Texts from "./Texts";
 
 import "./CardPostit.css";
 import CheckBoxList from "./CheckBoxList";
 
-const CardPostit = ({ info, deletePost, editPost }) => {
+const CardPostit = ({ info, deletePost, editPost, textInputSearch }) => {
   const [invalidDate, setInvalidDate] = useState(false);
+
+  const [searchMatch, setSearchMatch] = useState(true);
+
+  useEffect(() => {
+    let match = new RegExp(textInputSearch, "i");
+
+    if (match.test(texts)) {
+      setSearchMatch(true);
+    } else {
+      setSearchMatch(false);
+    }
+  }, [textInputSearch]);
 
   let dados = {
     checkList: info.checkList,
@@ -16,12 +28,11 @@ const CardPostit = ({ info, deletePost, editPost }) => {
   };
 
   const validateDate = (date) => {
-
-    if(date.length < 1){
-      setInvalidDate(false)
-      return
+    if (date.length < 1) {
+      setInvalidDate(false);
+      return;
     }
-    
+
     let expressao = new RegExp(
       /^(?:(?:31(\/|-|\.)(?:0?[13578]|1[02]))\1|(?:(?:29|30)(\/|-|\.)(?:0?[1,3-9]|1[0-2])\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:29(\/|-|\.)0?2\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\d|2[0-8])(\/|-|\.)(?:(?:0?[1-9])|(?:1[0-2]))\4(?:(?:1[6-9]|[2-9]\d)?\d{2})$/,
       "g"
@@ -36,10 +47,23 @@ const CardPostit = ({ info, deletePost, editPost }) => {
     }
   };
 
+  //codigos de busca
+  let textToSearch = [];
+  textToSearch.push(dados.date);
+  textToSearch.push(dados.message);
+  textToSearch.push(dados.title);
+  dados.checkList.forEach((dado) => {
+    textToSearch.push(dado.text);
+  });
 
+  /* if (searchMatch) {
+    setSearchMatch(false);
+  } */
+
+  const texts = textToSearch.join(" ");
 
   return (
-    <div className="card">
+    <div className="card" style={{ display: searchMatch ? "" : "none" }}>
       <Texts
         data={info}
         deletePost={deletePost}

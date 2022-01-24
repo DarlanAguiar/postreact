@@ -39,18 +39,6 @@ const Header = ({ show, setShow, fetchData }) => {
     }
   };
 
-  /* 
-data: "07-01-2022"
-dataEdicao: ""
-id: 5
-listaCheck: Array(3)
-0: {texto: 'primeiro check', checado: false}
-1: {texto: 'segundo check', checado: false}
-2: {texto: 'terceiro check', checado: true}
-length: 3
-mensagem: "Texto do lembrete"
-titulo: "Titulo" */
-
   const clearFilds = () => {
     setTitle("");
     setText("");

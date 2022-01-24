@@ -7,6 +7,8 @@ import "./CheckBoxItem.css";
 const CheckBoxItem = ({ dataItem, data, indice, editPost }) => {
   const dados = data;
 
+  
+
   const deleteRow = (index) => {
     const deletedRow = dados.checkList.filter((item, i) => i !== index);
     dados.checkList = deletedRow;
