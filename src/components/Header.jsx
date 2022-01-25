@@ -5,7 +5,7 @@ import CheckItem from "./CheckItem";
 
 import "./Header.css";
 
-const Header = ({ show, setShow, fetchData }) => {
+const Header = ({ show, setShow, fetchPostIts }) => {
   const [title, setTitle] = useState("");
   const [text, setText] = useState("");
   const [date, setDate] = useState("");
@@ -23,7 +23,7 @@ const Header = ({ show, setShow, fetchData }) => {
   const checkText = () => {
     if (text.length > 0) {
       addDb();
-      fetchData();
+      fetchPostIts();
       setNoText(false);
     } else {
       setNoText(true);

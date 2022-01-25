@@ -1,23 +1,22 @@
-export let bancoDeDados;
+let bancoDeDados;
 let bancoDeDadosInicializado = false;
-let nomeDoBancoDeDados = "dbpostreact";
-let nomeDaLista = "listareact";
+const nomeDoBancoDeDados = "dbpostreact";
+const nomeDaLista = "listareact";
 
-export async function getBD() {
+async function initBD() {
   if (!bancoDeDadosInicializado) {
+    bancoDeDadosInicializado = true;      
     await criaBancoDeDados();
   }
-  return bancoDeDados;
 }
 
 function criaBancoDeDados() {
-  bancoDeDadosInicializado = true;
   return new Promise((resolve,reject) => {
     let requisicao = window.indexedDB.open(nomeDoBancoDeDados, 2);
 
     requisicao.onsuccess = (evento) => {
       bancoDeDados = requisicao.result;
-      console.log("banco de dados criado", evento, bancoDeDados);
+      //console.log("banco de dados criado", evento, bancoDeDados);
       resolve();
     };
 
@@ -61,4 +60,65 @@ export function salvarDados(data) {
   };
 
   listaParaAdicionar.add(newItem);
+  console.log("***"+data)
+}
+
+export const deleteData = (id) => {
+  let localParaAdicionar = bancoDeDados.transaction(
+    [nomeDaLista],
+    "readwrite"
+  );
+  let listaParaAdicionar = localParaAdicionar.objectStore(nomeDaLista);
+
+  listaParaAdicionar.delete(id);
+};
+
+export const updateData = (updatedData) => {
+  let localParaAdicionar = bancoDeDados.transaction(
+    [nomeDaLista],
+    "readwrite"
+  );
+  let listaParaAdicionar = localParaAdicionar.objectStore(nomeDaLista);
+  listaParaAdicionar.put(updatedData);
+};
+
+export async function fetchData() {
+  await initBD();
+  const dataPromise = new Promise((resolve) => {
+    
+    var dados = [];
+
+    let objetoGuardado = bancoDeDados
+      .transaction(nomeDaLista)
+      .objectStore(nomeDaLista);
+
+    objetoGuardado.openCursor().onsuccess = (evento) => {
+      const cursor = evento.target.result;
+
+      if (cursor) {
+        const title = cursor.value.title;
+        const text = cursor.value.message;
+        const checkList = cursor.value.checkList;
+        const date = cursor.value.date;
+        const id = cursor.value.id;
+        const editDate = cursor.value.editDate;
+
+        dados.push({
+          id: id,
+          title: title,
+          message: text,
+          checkList: checkList,
+          date: date,
+          editDate: editDate,
+        });
+
+        cursor.continue();
+      } else {
+        
+        resolve(dados);
+      }
+    };
+  });
+  const returnedData = await dataPromise;
+  return returnedData;
 }

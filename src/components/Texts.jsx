@@ -7,6 +7,7 @@ const Texts = ({ data, deletePost, editPost, dataEdit }) => {
   let dados = dataEdit;
 
   return (
+   
     <div className="texts">
       <div className="cabecalho">
         <h4

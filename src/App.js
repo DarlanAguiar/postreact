@@ -1,111 +1,43 @@
-import "./App.css";
+import { useEffect, useState } from "react";
+import { deleteData, fetchData, updateData } from "./database/database";
+import { BsMic, BsSearch } from "react-icons/bs";
+import moment from "moment";
+import { TiPlus } from "react-icons/ti";
+
+import CardPostit from "./components/CardPostit";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
-import { getBD } from "./database/database";
-import { BsMic, BsSearch } from "react-icons/bs";
 
-import { TiPlus } from "react-icons/ti";
-import { useEffect, useState } from "react";
-import CardPostit from "./components/CardPostit";
+import "./App.css";
 
 function App() {
   const [menu, SetMenu] = useState(false);
   const [infoDB, setInfoDB] = useState([]);
-  const [bancoDeDados, setBancoDeDados] = useState(null);
   const [visibleSearch, setVisibleSearch] = useState(false);
   const [textSearch, setTextSearch] = useState("");
-  const [ouvindo, setOuvindo] = useState(false)
-  
+  const [ouvindo, setOuvindo] = useState(false);
 
   useEffect(() => {
-    const initializeBD = async () => {
-      setBancoDeDados(await getBD());
-    };
-    initializeBD();
+    fetchPostIts();
   }, []);
-
-  useEffect(() => {
-    if (bancoDeDados) {
-      fetchData();
-    }
-  }, [bancoDeDados]);
 
   const showMenu = () => {
     SetMenu(!menu);
   };
 
-  //let infof = []
-
-  const createCard = (dados) => {
-    console.log("Chamou 1", dados, infoDB);
-    // setTimeout(() => {
-    console.log("Chamou 2", dados, infoDB);
+  async function fetchPostIts() {
+    const dados = await fetchData();
     setInfoDB(dados);
-    console.log("Chamou 3", dados, infoDB);
-    // }, 110);
-    console.log("Chamou 4", dados, infoDB);
-
-    /* const info = [
-      ...infoPostit,
-      { id: id, title: title, message: text, date: date, checkList: checkList, },
-    ]; */
-
-    //setInfoPostit(info);
-  };
-
-  function fetchData() {
-    var dados = [];
-
-    let nomeDaLista = "listareact";
-
-    let objetoGuardado = bancoDeDados
-      .transaction(nomeDaLista)
-      .objectStore(nomeDaLista);
-
-    objetoGuardado.openCursor().onsuccess = (evento) => {
-      const cursor = evento.target.result;
-
-      if (cursor) {
-        const title = cursor.value.title;
-        const text = cursor.value.message;
-        const checkList = cursor.value.checkList;
-        const date = cursor.value.date;
-        const id = cursor.value.id;
-        const editDate = cursor.value.editDate;
-
-        dados.push({
-          id: id,
-          title: title,
-          message: text,
-          checkList: checkList,
-          date: date,
-          editDate: editDate,
-        });
-
-        cursor.continue();
-      } else {
-        createCard(dados);
-        // resolve(dados);
-      }
-    };
   }
 
   const deletePost = (id) => {
-    let nomeDaLista = "listareact";
-    let localParaAdicionar = bancoDeDados.transaction(
-      [nomeDaLista],
-      "readwrite"
-    );
-    let listaParaAdicionar = localParaAdicionar.objectStore(nomeDaLista);
+    deleteData(id);
 
-    listaParaAdicionar.delete(id);
-    fetchData();
+    fetchPostIts();
   };
 
   const editPost = (data) => {
-    let nomeDaLista = "listareact";
-
-    const dataED = new Date();
+    /* const dataED = new Date();
     const dia = String(dataED.getDate()).padStart(2, "0");
     const mes = String(dataED.getMonth() + 1).padStart(2, "0");
     const ano = dataED.getFullYear();
@@ -115,28 +47,23 @@ function App() {
       ? (minutos = minutos.toString())
       : (minutos = `0${minutos}`);
 
-    const dataAtual = `Editado ${dia}/${mes}/${ano} às ${hora}:${minutos}`;
+    const dataAtual = `Editado ${dia}/${mes}/${ano} às ${hora}:${minutos}`; */
 
-    let localParaAdicionar = bancoDeDados.transaction(
-      [nomeDaLista],
-      "readwrite"
-    );
+    const dataAtual = `Editado ${moment().format("DD/MM/YYYY H:mm")}`;
 
-    let listaParaAdicionar = localParaAdicionar.objectStore(nomeDaLista);
-
-    listaParaAdicionar.put({
+    const updatedData = {
       id: data.id,
       title: data.title,
       message: data.message,
       checkList: data.checkList,
       date: data.date,
       editDate: dataAtual,
-    });
+    };
 
-    fetchData();
+    updateData(updatedData);
+
+    fetchPostIts();
   };
-
-  console.log(" Tentou renderizar ", infoDB);
 
   const showSearch = () => {
     setVisibleSearch(!visibleSearch);
@@ -172,8 +99,7 @@ function App() {
 
   return (
     <div className="body">
-      {/* <div>{JSON.stringify(infoDB)}</div> */}
-      <Header show={menu} setShow={showMenu} fetchData={fetchData} />
+      <Header show={menu} setShow={showMenu} fetchPostIts={fetchPostIts} />
 
       {infoDB.map((info, id) => (
         <CardPostit
@@ -201,9 +127,19 @@ function App() {
               setTextSearch(e.target.value);
             }}
           />
-          <BsMic fontSize={20} width={20} style={{ color: ouvindo ? "#126ece" : "black" }} onClick={handleMicClick}/>
+          <BsMic
+            fontSize={20}
+            width={20}
+            style={{ color: ouvindo ? "#126ece" : "black" }}
+            onClick={handleMicClick}
+          />
         </div>
-        <BsSearch color="chartreuse" fontSize={27} onClick={showSearch} className={"lupa"} />
+        <BsSearch
+          color="chartreuse"
+          fontSize={27}
+          onClick={showSearch}
+          className={"lupa"}
+        />
       </div>
 
       <Footer />

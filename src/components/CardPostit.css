@@ -27,3 +27,20 @@
   position: absolute;
   bottom: 3px;
 }
+
+.OneMoreCheck{
+ 
+  font-size: .85em;
+  color: #666;
+  margin: 3px;
+  border-radius: 5px;
+  padding: 3px 3px 3px 6px;
+  transition: all ease .3s;
+}
+
+.OneMoreCheck:hover{
+  color: white;
+  background-color: #444;
+ 
+}
+
